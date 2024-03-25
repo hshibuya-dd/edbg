@@ -182,6 +182,24 @@
 %%%   ["Allow: GET, POST, OPTIONS, HEAD\r\n"]
 %%% '''
 %%%
+%%% Once you are done with one inspection session, you can exit with
+%%% (q)uit command. 
+%%% 
+%%% ```
+%%%   tlist> q
+%%%   true
+%%%   4>
+%%% '''
+%%%
+%%% You may start other tracing session from here.  If you want to
+%%% discard the previous trace record and start from scratch, 
+%%% you can clear the trace file:
+%%%
+%%% ```
+%%%   5> edbg:fclear().
+%%%   ok
+%%% '''
+%%%
 %%% To see more examples visit the `edbg' wiki at:
 %%% [https://github.com/etnt/edbg/wiki/Tracing]
 %%%
@@ -197,6 +215,7 @@
          , fstart/1
          , fstart/2
          , fstop/0
+         , fclear/0
          , get_traced_pid/0
          , lts/0
          , send/2
@@ -242,7 +261,7 @@
 -include_lib("eunit/include/eunit.hrl").
 -endif.
 
-
+-define(tracefile, "./edbg.trace_result").
 
 -define(mytracer, mytracer).
 
@@ -328,7 +347,7 @@ fhelp() ->
 
 %% @private
 file() ->
-    file("./edbg.trace_result").
+    file(?tracefile).
 
 %% @private
 file(Fname) ->
@@ -337,7 +356,7 @@ file(Fname) ->
 
 %% @private
 xfile() ->
-    xfile("./edbg.trace_result").
+    xfile(?tracefile).
 
 %% @private
 xfile(Fname) ->
@@ -361,6 +380,21 @@ file(Fname, IsElixir) ->
         _:Err ->
             {error, Err}
     end.
+
+%% @private
+fclear() ->
+    fclear(?tracefile).
+
+%% @private
+fclear(Fname) ->
+    catch stop_trace(),
+    catch edbg_file_tracer:stop(),
+    case file:open(Fname,[write]) of
+        {ok, File} ->
+            file:position(File, {bof, 0}),
+            file:truncate(File),
+            file:close(File)
+   end.
 
 %% @private
 fstart() ->

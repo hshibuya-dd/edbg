@@ -60,6 +60,7 @@
          fstart/1,
          fstart/2,
          fstop/0,
+         fclear/0,
          bon/0,
          bon/2,
          f/1,
@@ -299,6 +300,10 @@ fstart(ModFunList, Options) ->
 %% @doc Stop tracing and dump the trace output to file.
 fstop() ->
     edbg_tracer:fstop().
+
+%% @doc Stop tracing and clear the contents of trace file
+fclear() ->
+    edbg_tracer:fclear().
 
 %% @doc Start tracing the process: 'Pid'.
 %%

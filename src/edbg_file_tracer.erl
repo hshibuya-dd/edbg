@@ -140,6 +140,10 @@ stop_trace() ->
     call(stop_trace).
 
 %% @private
+clear_trace() ->
+    call(clear_trace).
+
+%% @private
 get_config() ->
     call(get_config).
 
